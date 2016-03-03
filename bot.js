@@ -50,6 +50,7 @@ if (usedLink == ""){
 }
 
 var id = comment.getCommentId(usedLink);
+var secus = comment.getSecus(usedLink);
 
 google.requestOptions = {
   headers: {
@@ -80,4 +81,4 @@ google.requestOptions = {
 console.log("");
 console.log("Post sur " + usedLink);
 
-fs.appendFile("done.txt", usedLink + "\n");
+// fs.appendFile("done.txt", usedLink + "\n");

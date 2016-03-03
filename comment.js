@@ -5,48 +5,38 @@ const htmlToJson = require('html-to-json');
 ///////////////////////////////////////////////
 
 exports.getCommentId = function(url){
-  var secus = [];
-
-  var promise = htmlToJson.request(url, {
-    'form': ['form', function ($form) {
-      if ($form.attr('action').match(/wp-comments-post.php/)){
-        return $form;
-      }
-    }]
-  }, function (err, result) {
-    for (var i = 0; i < result.form.length; i++) {
-      if (result.form[i] != "undefined"){
-        // console.log(result.form[i]);
-
-        for (j in result.form[i]) {
-          if (typeof result.form[i][j].children != "undefined"){
-            // console.log(result.form[i][j].children);
-            for (k in result.form[i][j].children) {
-              if (typeof result.form[i][j].children[k].attribs != "undefined"){
-                if (result.form[i][j].children[k].attribs.class == "form-submit"){
-                  for (l in result.form[i][j].children[k].children){
-                    if (typeof result.form[i][j].children[k].children[l].attribs != "undefined" && result.form[i][j].children[k].children[l].attribs.name == "comment_post_ID"){
-                      console.log("id: " + result.form[i][j].children[k].children[l].attribs.value);
-                    }
-                  }
-                  // console.log(result.form[i][j].children[k].children);
-                }
-                if (result.form[i][j].children[k].attribs.style == "display: none;"){
-                  // console.log(result.form[i][j].children[k].children);
-                  for (l in result.form[i][j].children[k].children) {
-                    if (typeof result.form[i][j].children[k].children[l].attribs != "undefined"){
-                      console.log("Sécurité bypass: " + result.form[i][j].children[k].children[l].attribs.id);
-                      secus.push({type: result.form[i][j].children[k].children[l].attribs.id, value: result.form[i][j].children[k].children[l].attribs.value})
-                    }
-                  }
-                  // console.log(secus);
-                }
-              }
+  var formElement = getFormElements(url, function(formElement){
+    for (i in formElement) {
+      if (typeof formElement[i].attribs != "undefined"){
+        if (formElement[i].attribs.class == "form-submit"){
+          for (l in formElement[i].children){
+            if (typeof formElement[i].children[l].attribs != "undefined" && formElement[i].children[l].attribs.name == "comment_post_ID"){
+              console.log("id: " + formElement[i].children[l].attribs.value);
             }
           }
+          // console.log(formElement.children);
         }
+      }
+    }
+  });
+}
 
-        // return result.form[i]
+exports.getSecus = function(url){
+  var secus = [];
+
+  var formElement = getFormElements(url, function(formElement){
+    for (i in formElement) {
+      if (typeof formElement[i].attribs != "undefined"){
+        if (formElement[i].attribs.style == "display: none;"){
+          // console.log(formElement[i].children);
+          for (l in formElement[i].children) {
+            if (typeof formElement[i].children[l].attribs != "undefined"){
+              console.log("Sécurité bypass: " + formElement[i].children[l].attribs.id);
+              secus.push({type: formElement[i].children[l].attribs.id, value: formElement[i].children[l].attribs.value})
+            }
+          }
+          // console.log(secus);
+        }
       }
     }
   });
@@ -93,4 +83,37 @@ exports.post = function(url, akismet){
   // write data to request body
   req.write(postData);
   req.end();
+}
+
+
+getFormElements = function(url, callback){
+  var json = [];
+
+  var promise = htmlToJson.request(url, {
+    'form': ['form', function ($form) {
+      if ($form.attr('action').match(/wp-comments-post.php/)){
+        return $form;
+      }
+    }]
+  }, function (err, result) {
+    for (var i = 0; i < result.form.length; i++) {
+      if (result.form[i] != "undefined"){
+        // console.log(result.form[i]);
+
+        for (j in result.form[i]) {
+          if (typeof result.form[i][j].children != "undefined"){
+            // console.log(result.form[i][j].children);
+            for (k in result.form[i][j].children) {
+              if (typeof result.form[i][j].children[k].attribs != "undefined"){
+                json.push(result.form[i][j].children[k]);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    callback(json);
+    return;
+  });
 }
