@@ -29,6 +29,16 @@ exports.getCommentId = function(url){
                   }
                   // console.log(result.form[i][j].children[k].children);
                 }
+                if (result.form[i][j].children[k].attribs.style == "display: none;"){
+                  // console.log(result.form[i][j].children[k].children);
+                  var secus = []
+                  for (l in result.form[i][j].children[k].children) {
+                    if (typeof result.form[i][j].children[k].children[l].attribs != "undefined"){
+                      secus.push({type: result.form[i][j].children[k].children[l].attribs.id, value: result.form[i][j].children[k].children[l].attribs.value})
+                    }
+                  }
+                  console.log(secus);
+                }
               }
             }
           }
