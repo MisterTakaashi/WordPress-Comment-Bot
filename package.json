@@ -1,0 +1,16 @@
+{
+  "name": "malbot",
+  "description": "Bot stalking WordPress comments with keyword",
+  "version": "0.0.1",
+  "maintainers": [
+    {
+      "name": "MisterTakaashi",
+      "email": "soapmctravich@gmail.com",
+      "web": "puresystem.eu"
+    }
+  ],
+  "dependencies": {
+    "google": "^1.5.0",
+    "html-to-json": "^0.6.0"
+  }
+}
