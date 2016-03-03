@@ -5,6 +5,8 @@ const htmlToJson = require('html-to-json');
 ///////////////////////////////////////////////
 
 exports.getCommentId = function(url){
+  var secus = [];
+
   var promise = htmlToJson.request(url, {
     'form': ['form', function ($form) {
       if ($form.attr('action').match(/wp-comments-post.php/)){
@@ -31,13 +33,13 @@ exports.getCommentId = function(url){
                 }
                 if (result.form[i][j].children[k].attribs.style == "display: none;"){
                   // console.log(result.form[i][j].children[k].children);
-                  var secus = []
                   for (l in result.form[i][j].children[k].children) {
                     if (typeof result.form[i][j].children[k].children[l].attribs != "undefined"){
+                      console.log("Sécurité bypass: " + result.form[i][j].children[k].children[l].attribs.id);
                       secus.push({type: result.form[i][j].children[k].children[l].attribs.id, value: result.form[i][j].children[k].children[l].attribs.value})
                     }
                   }
-                  console.log(secus);
+                  // console.log(secus);
                 }
               }
             }
